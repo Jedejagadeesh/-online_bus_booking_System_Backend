@@ -149,32 +149,36 @@ def register(request):
 # =========================
 # LOGIN USER
 # =========================
-@csrf_exempt
 @api_view(['POST'])
-def login(request):
+def register(request):
     try:
-        data = json.loads(request.body)
+        data = request.data
 
+        name = data.get("name")
         email = data.get("email")
         password = data.get("password")
 
-        user = User.objects.filter(username=email).first()
+        if User.objects.filter(username=email).exists():
+            return Response({"error": "User already exists"}, status=400)
 
-        if user is None:
-            return Response({"error": "Email not found"}, status=404)
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password
+        )
 
-        if not user.check_password(password):
-            return Response({"error": "Wrong password"}, status=401)
+        user.first_name = name
+        user.save()
 
         return Response({
-            "message": "Login success",
+            "message": "User registered successfully",
             "user": {
                 "id": user.id,
-                "name": user.first_name,
-                "email": user.email
+                "name": name,
+                "email": email
             }
         })
 
     except Exception as e:
-        print("LOGIN ERROR:", str(e))
+        print("REGISTER ERROR:", str(e))
         return Response({"error": "Server error"}, status=500)
