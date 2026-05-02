@@ -1,0 +1,613 @@
+/* ================= GLOBAL ================= */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f4f6f8;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+  background: linear-gradient(90deg, #e53935, #ff5252);
+  color: white;
+
+  padding: 15px 25px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* NAV LINKS */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* NAV BUTTONS */
+.nav-links button {
+  background: transparent;
+  border: none;
+
+  color: white;
+
+  font-size: 16px;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: bold;
+
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+
+  transition: 0.3s ease;
+}
+
+.nav-links button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ================= SEARCH ================= */
+.searchBox {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.searchBox input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 180px;
+
+  font-weight: bold;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.searchBox button {
+  background: #e53935;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.searchBox button:hover {
+  background: #c62828;
+}
+
+/* ================= BUS LIST ================= */
+.busContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* FIXED CARD (YOU HAD bus-card + busCard MIXED) */
+.busCard,
+.bus-card {
+  background: white;
+  width: 260px;
+  border-radius: 12px;
+  padding: 15px;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+
+.busCard:hover,
+.bus-card:hover {
+  transform: translateY(-5px);
+}
+
+.busCard h3 {
+  margin: 0;
+}
+
+.busCard p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.busCard button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+
+  border: none;
+  background: #e53935;
+  color: white;
+
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ================= SEATS ================= */
+.seats {
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  gap: 12px;
+
+  justify-content: center;
+  padding: 20px;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.seat {
+  width: 55px;
+  height: 55px;
+
+  background: #ddd;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+  cursor: pointer;
+
+  font-weight: bold;
+}
+
+.seat.selected {
+  background: #2196f3;
+  color: white;
+}
+
+.seat.booked {
+  background: #e53935;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* ================= PAYMENT ================= */
+.payment-box {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+/* ================= TICKET ================= */
+.ticket-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.ticket-card {
+  width: 350px;
+  background: white;
+
+  border-radius: 15px;
+  padding: 20px;
+
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+
+  position: relative;
+}
+
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: 8px;
+  width: 100%;
+
+  background: linear-gradient(90deg, #e53935, #ff5252);
+}
+
+/* ================= FOOTER ================= */
+.footer {
+  margin-top: auto;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ================= MODAL (LOGIN / REGISTER) ================= */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+}
+
+.modal-card {
+  width: 350px;
+  background: white;
+
+  padding: 30px;
+  border-radius: 15px;
+
+  text-align: center;
+
+  animation: pop 0.3s ease-in-out;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.modal-card input {
+  width: 100%;
+  padding: 12px;
+
+  margin: 10px 0;
+
+  border: 1px solid #ccc;
+  border-radius: 8px;
+
+  font-weight: bold;
+}
+
+.modal-card button {
+  width: 100%;
+  padding: 12px;
+
+  background: #007bff;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.modal-card button:hover {
+  background: #0056b3;
+}
+
+/* ================= TRACK ================= */
+.track-card {
+  background: white;
+  padding: 20px;
+  margin: 15px;
+
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+/* TABLET */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .searchBox input {
+    width: 100%;
+  }
+
+  .busCard,
+  .bus-card {
+    width: 90%;
+  }
+
+  .modal-card {
+    width: 90%;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+  .navbar {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .searchBox {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .seats {
+    grid-template-columns: repeat(3, 50px);
+  }
+}
+
+/* ================= MODAL BACKDROP ================= */
+.modal {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  z-index: 9999;
+}
+
+/* ================= SINGLE CARD ================= */
+.modal-card {
+  width: 360px;
+
+  background: #ffffff;
+
+  padding: 30px;
+
+  border-radius: 15px;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  display: flex;
+  flex-direction: column;   /* 🔥 COLUMN LAYOUT */
+  gap: 12px;
+
+  text-align: center;
+
+  animation: pop 0.3s ease-in-out;
+
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* POP ANIMATION */
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* TITLE */
+.modal-card h2 {
+  margin-bottom: 5px;
+  color: #1e3c72;
+  font-weight: bold;
+}
+
+/* ================= INPUTS ================= */
+.modal-card input {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  outline: none;
+
+  transition: 0.3s ease;
+}
+
+/* INPUT FOCUS */
+.modal-card input:focus {
+  border-color: #0072ff;
+  box-shadow: 0 0 5px rgba(0,114,255,0.3);
+}
+
+/* ================= REGISTER BUTTON ================= */
+.modal-card button {
+  width: 100%;
+
+  padding: 12px;
+
+  margin-top: 10px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+/* BUTTON HOVER */
+.modal-card button:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 15px rgba(255,65,108,0.4);
+}
+
+/* ================= SMALL TEXT ================= */
+.modal-card p {
+  font-size: 13px;
+  color: #555;
+}
+
+.modal-card span {
+  color: #0072ff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 480px) {
+  .modal-card {
+    width: 90%;
+    padding: 20px;
+  }
+}
+/* =========================
+   MY BOOKINGS PAGE CONTAINER
+========================= */
+.booking-container {
+  padding: 30px;
+  text-align: center;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* TITLE */
+.booking-container h2 {
+  color: #e53935;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+/* =========================
+   BOOKING LIST (FLEX WRAP)
+========================= */
+.booking-list {
+  display: flex;
+  flex-wrap: wrap;        /* 🔥 important */
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* =========================
+   BOOKING CARD
+========================= */
+.booking-card {
+  width: 300px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  transition: all 0.3s ease;
+
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+/* TOP RED BAR */
+.booking-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: 6px;
+  width: 100%;
+  background: linear-gradient(90deg, #e53935, #ff5252);
+}
+
+/* HOVER EFFECT */
+.booking-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* TEXT */
+.booking-card h3 {
+  margin-bottom: 10px;
+  color: #e53935;
+  font-size: 18px;
+}
+
+.booking-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* =========================
+   TRACK BUTTON
+========================= */
+.track-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(90deg, #e53935, #ff5252);
+  color: white;
+
+  font-size: 15px;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.track-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #c62828, #e53935);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+.booking-container p {
+  font-size: 16px;
+  color: #777;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 768px) {
+  .booking-card {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-container {
+    padding: 15px;
+  }
+
+  .booking-card {
+    width: 100%;
+  }
+
+  .booking-card h3 {
+    font-size: 16px;
+  }
+
+  .booking-card p {
+    font-size: 13px;
+  }
+
+  .track-btn {
+    font-size: 14px;
+  }
+}
