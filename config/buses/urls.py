@@ -12,7 +12,7 @@ urlpatterns = [
     path('booked/<int:bus_id>/', get_booked_seats),
     path('book/', create_booking),
 
-    # 🔥 ADD THESE TWO
+    # ✅ AUTH APIs
     path('register/', register),
     path('login/', login),
 ]

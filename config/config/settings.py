@@ -1,18 +1,19 @@
 """
 Django settings for config project.
 """
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# SECURITY
+# ================= SECURITY =================
 SECRET_KEY = 'django-insecure-zn4hk*z%$!x^*i5sjt%6egujl!^mp!y&61z9d#m=n_w7k3^s@-'
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
-# APPLICATIONS
+# ================= APPLICATIONS =================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,15 +26,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
 
-    # local apps
+    # local
     'buses',
 ]
 
 
-# MIDDLEWARE
+# ================= MIDDLEWARE =================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # must be first
-
+    'corsheaders.middleware.CorsMiddleware',  # 🔥 must be first
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -45,8 +45,11 @@ MIDDLEWARE = [
 ]
 
 
+# ================= URL CONFIG =================
 ROOT_URLCONF = 'config.urls'
 
+
+# ================= TEMPLATES =================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -62,23 +65,25 @@ TEMPLATES = [
     },
 ]
 
+
+# ================= WSGI =================
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# DATABASE (MySQL)
+# ================= DATABASE (MYSQL) =================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'bus_booking_db',
         'USER': 'root',
         'PASSWORD': 'root123',
-         'HOST': '127.0.0.1',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
 
 
-# PASSWORD VALIDATION
+# ================= PASSWORD VALIDATION =================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -87,22 +92,37 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# INTERNATIONALIZATION
+# ================= INTERNATIONAL =================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
 
-# STATIC FILES
+# ================= STATIC =================
 STATIC_URL = 'static/'
 
 
-# DEFAULT PRIMARY KEY
+# ================= DEFAULT PK =================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# CORS CONFIG (choose ONE style)
+# ================= CORS CONFIG =================
+CORS_ALLOW_ALL_ORIGINS = True   # 🔥 for development
+
+# (OPTIONAL for production)
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
     "https://onlinebusticketreservationsystem.vercel.app"
 ]
+
+
+# ================= EMAIL CONFIG (VERY IMPORTANT) =================
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'jagadeeshjade0@gmail.com'        # 🔥 replace
+EMAIL_HOST_PASSWORD = 'Shivayya@143'      # 🔥 app password only
