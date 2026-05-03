@@ -1,16 +1,24 @@
+
 """
 Django settings for config project.
 """
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # ================= SECURITY =================
-SECRET_KEY = 'django-insecure-zn4hk*z%$!x^*i5sjt%6egujl!^mp!y&61z9d#m=n_w7k3^s@-'
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this')
+
+DEBUG = True  # 🔥 set False in production later
+
+ALLOWED_HOSTS = [
+    "online-bus-booking-system-backend-2m8m.onrender.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # ================= APPLICATIONS =================
@@ -33,7 +41,7 @@ INSTALLED_APPS = [
 
 # ================= MIDDLEWARE =================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # 🔥 must be first
+    'corsheaders.middleware.CorsMiddleware',  # must be first
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,15 +78,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# ================= DATABASE (MYSQL) =================
+# ================= DATABASE =================
+# 🔥 Using SQLite for Render (simple & works immediately)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'bus_booking_db',
-        'USER': 'root',
-        'PASSWORD': 'root123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -101,6 +106,7 @@ USE_TZ = True
 
 # ================= STATIC =================
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # ================= DEFAULT PK =================
@@ -108,21 +114,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ================= CORS CONFIG =================
-CORS_ALLOW_ALL_ORIGINS = True   # 🔥 for development
-
-# (OPTIONAL for production)
 CORS_ALLOWED_ORIGINS = [
+    "https://online-bus-booking-system-frontend.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://onlinebusticketreservationsystem.vercel.app"
 ]
 
+CORS_ALLOW_CREDENTIALS = True
 
-# ================= EMAIL CONFIG (VERY IMPORTANT) =================
+# (Optional for testing only)
+# CORS_ALLOW_ALL_ORIGINS = True
+
+
+# ================= EMAIL CONFIG =================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'jagadeeshjade0@gmail.com'        # 🔥 replace
-EMAIL_HOST_PASSWORD = 'Shivayya@143'      # 🔥 app password only
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
