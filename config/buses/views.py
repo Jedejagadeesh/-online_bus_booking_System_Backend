@@ -19,23 +19,19 @@ def create_admin():
             email="jagadeeshjade0@gmail.com",
             password="12345678"
         )
-        print("✅ Admin created: admin / 12345678")
+        print("✅ Admin created")
 
 
-# ⚠️ Call once when server starts
 create_admin()
 
 
 # =========================
-# SEARCH BUSES (FIXED)
+# SEARCH BUSES
 # =========================
 @api_view(['GET'])
 def search_buses(request):
     source = request.GET.get('from', '').strip()
     destination = request.GET.get('to', '').strip()
-
-    if not source or not destination:
-        return Response({"routes": []})
 
     buses = Bus.objects.filter(
         source__icontains=source,
@@ -53,15 +49,12 @@ def search_buses(request):
 @api_view(['GET'])
 def get_booked_seats(request, bus_id):
     try:
-        journey_date = request.GET.get("date")
+        date = request.GET.get("date")
 
-        if not journey_date:
+        if not date:
             return Response({"booked_seats": []})
 
-        bookings = Booking.objects.filter(
-            bus_id=bus_id,
-            journey_date=journey_date
-        )
+        bookings = Booking.objects.filter(bus_id=bus_id, journey_date=date)
 
         seats = []
         for b in bookings:
@@ -70,12 +63,11 @@ def get_booked_seats(request, bus_id):
         return Response({"booked_seats": seats})
 
     except Exception as e:
-        print("SEAT ERROR:", str(e))
         return Response({"booked_seats": []})
 
 
 # =========================
-# CREATE BOOKING + EMAIL
+# CREATE BOOKING (FINAL FIXED)
 # =========================
 @api_view(['POST'])
 def create_booking(request):
@@ -84,37 +76,32 @@ def create_booking(request):
 
         bus_id = request.data.get("bus")
         seats = request.data.get("seats")
-        date_str = request.data.get("journey_date")
+        journey_date = request.data.get("journey_date")
         user_id = request.data.get("user_id")
         email = request.data.get("email")
         name = request.data.get("name")
 
-        # ---------- VALIDATION ----------
-        if not bus_id or not seats or not date_str:
+        # VALIDATION
+        if not bus_id or not seats or not journey_date:
             return Response({"error": "Missing data"}, status=400)
 
-        # ---------- DATE ----------
+        # DATE FIX
         try:
-            journey_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+            journey_date = datetime.strptime(journey_date, "%Y-%m-%d").date()
         except:
-            return Response({"error": "Invalid date format"}, status=400)
+            return Response({"error": "Invalid date"}, status=400)
 
-        # ---------- USER ----------
-        user = None
-        if user_id:
-            user = User.objects.filter(id=user_id).first()
+        # USER
+        user = User.objects.filter(id=user_id).first() if user_id else None
 
-        # ---------- SEATS ----------
+        # SEATS FORMAT FIX
         if isinstance(seats, list):
             seats = ",".join(map(str, seats))
 
         seats_list = seats.split(",")
 
-        # ---------- CHECK BOOKED ----------
-        bookings = Booking.objects.filter(
-            bus_id=bus_id,
-            journey_date=journey_date
-        )
+        # CHECK BOOKED SEATS
+        bookings = Booking.objects.filter(bus_id=bus_id, journey_date=journey_date)
 
         booked = []
         for b in bookings:
@@ -122,12 +109,9 @@ def create_booking(request):
 
         for s in seats_list:
             if s in booked:
-                return Response(
-                    {"error": f"Seat {s} already booked"},
-                    status=400
-                )
+                return Response({"error": f"Seat {s} already booked"}, status=400)
 
-        # ---------- SAVE ----------
+        # SAVE BOOKING
         Booking.objects.create(
             user=user,
             bus_id=bus_id,
@@ -136,17 +120,15 @@ def create_booking(request):
             total_price=0
         )
 
-        # ---------- EMAIL ----------
+        # EMAIL (optional safe)
         if email:
             try:
-                print("📧 Sending email to:", email)
-
                 send_mail(
                     subject="🎫 Booking Confirmed",
                     message=f"""
-Hello {name},
+Hi {name},
 
-Your booking is confirmed 🚍
+Booking Confirmed 🚍
 
 Bus ID: {bus_id}
 Seats: {seats}
@@ -156,21 +138,16 @@ Thank you!
 """,
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[email],
-                    fail_silently=False
+                    fail_silently=True
                 )
+            except:
+                pass
 
-                print("✅ Email sent")
-
-            except Exception as e:
-                print("❌ EMAIL ERROR:", str(e))
-
-        return Response({
-            "message": "Booking successful"
-        })
+        return Response({"message": "Booking successful ✅"})
 
     except Exception as e:
-        print("🔥 BACKEND ERROR:", str(e))
-        return Response({"error": "Server error"}, status=500)
+        print("🔥 ERROR:", str(e))
+        return Response({"error": str(e)}, status=500)
 
 
 # =========================
@@ -178,35 +155,18 @@ Thank you!
 # =========================
 @api_view(['POST'])
 def register(request):
-    try:
-        name = request.data.get("name")
-        email = request.data.get("email")
-        password = request.data.get("password")
+    name = request.data.get("name")
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-        if User.objects.filter(username=email).exists():
-            return Response({"error": "User already exists"}, status=400)
+    if User.objects.filter(username=email).exists():
+        return Response({"error": "User exists"}, status=400)
 
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=password
-        )
+    user = User.objects.create_user(username=email, email=email, password=password)
+    user.first_name = name
+    user.save()
 
-        user.first_name = name
-        user.save()
-
-        return Response({
-            "message": "User registered successfully",
-            "user": {
-                "id": user.id,
-                "name": name,
-                "email": email
-            }
-        })
-
-    except Exception as e:
-        print("REGISTER ERROR:", str(e))
-        return Response({"error": "Server error"}, status=500)
+    return Response({"message": "Registered", "user": {"id": user.id}})
 
 
 # =========================
@@ -214,24 +174,19 @@ def register(request):
 # =========================
 @api_view(['POST'])
 def login(request):
-    try:
-        email = request.data.get("email")
-        password = request.data.get("password")
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-        user = authenticate(username=email, password=password)
+    user = authenticate(username=email, password=password)
 
-        if user:
-            return Response({
-                "message": "Login successful",
-                "user": {
-                    "id": user.id,
-                    "email": user.email,
-                    "name": user.first_name
-                }
-            })
+    if user:
+        return Response({
+            "message": "Login success",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "name": user.first_name
+            }
+        })
 
-        return Response({"error": "Invalid credentials"}, status=400)
-
-    except Exception as e:
-        print("LOGIN ERROR:", str(e))
-        return Response({"error": "Server error"}, status=500)
+    return Response({"error": "Invalid credentials"}, status=400)
