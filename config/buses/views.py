@@ -10,12 +10,32 @@ from django.conf import settings
 
 
 # =========================
-# SEARCH BUSES
+# CREATE ADMIN (AUTO)
+# =========================
+def create_admin():
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            username="admin",
+            email="jagadeeshjade0@gmail.com",
+            password="12345678"
+        )
+        print("✅ Admin created: admin / 12345678")
+
+
+# ⚠️ Call once when server starts
+create_admin()
+
+
+# =========================
+# SEARCH BUSES (FIXED)
 # =========================
 @api_view(['GET'])
 def search_buses(request):
-    source = request.GET.get('from')
-    destination = request.GET.get('to')
+    source = request.GET.get('from', '').strip()
+    destination = request.GET.get('to', '').strip()
+
+    if not source or not destination:
+        return Response({"routes": []})
 
     buses = Bus.objects.filter(
         source__icontains=source,
@@ -55,7 +75,7 @@ def get_booked_seats(request, bus_id):
 
 
 # =========================
-# CREATE BOOKING + EMAIL (FINAL FIXED)
+# CREATE BOOKING + EMAIL
 # =========================
 @api_view(['POST'])
 def create_booking(request):
@@ -69,28 +89,28 @@ def create_booking(request):
         email = request.data.get("email")
         name = request.data.get("name")
 
-        # ---------------- VALIDATION ----------------
+        # ---------- VALIDATION ----------
         if not bus_id or not seats or not date_str:
             return Response({"error": "Missing data"}, status=400)
 
-        # ---------------- DATE SAFE ----------------
+        # ---------- DATE ----------
         try:
             journey_date = datetime.strptime(date_str, "%Y-%m-%d").date()
         except:
             return Response({"error": "Invalid date format"}, status=400)
 
-        # ---------------- USER SAFE ----------------
+        # ---------- USER ----------
         user = None
         if user_id:
             user = User.objects.filter(id=user_id).first()
 
-        # ---------------- SEATS SAFE ----------------
+        # ---------- SEATS ----------
         if isinstance(seats, list):
             seats = ",".join(map(str, seats))
 
         seats_list = seats.split(",")
 
-        # ---------------- CHECK ALREADY BOOKED ----------------
+        # ---------- CHECK BOOKED ----------
         bookings = Booking.objects.filter(
             bus_id=bus_id,
             journey_date=journey_date
@@ -107,7 +127,7 @@ def create_booking(request):
                     status=400
                 )
 
-        # ---------------- SAVE BOOKING ----------------
+        # ---------- SAVE ----------
         Booking.objects.create(
             user=user,
             bus_id=bus_id,
@@ -116,10 +136,10 @@ def create_booking(request):
             total_price=0
         )
 
-        # ================= EMAIL (DEBUG VERSION) =================
+        # ---------- EMAIL ----------
         if email:
             try:
-                print("📧 SENDING EMAIL TO:", email)
+                print("📧 Sending email to:", email)
 
                 send_mail(
                     subject="🎫 Booking Confirmed",
@@ -139,13 +159,13 @@ Thank you!
                     fail_silently=False
                 )
 
-                print("✅ EMAIL SENT SUCCESSFULLY")
+                print("✅ Email sent")
 
             except Exception as e:
                 print("❌ EMAIL ERROR:", str(e))
 
         return Response({
-            "message": "Booking successful + Email attempted"
+            "message": "Booking successful"
         })
 
     except Exception as e:

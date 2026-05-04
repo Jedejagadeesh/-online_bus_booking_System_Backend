@@ -1,4 +1,3 @@
-
 """
 Django settings for config project.
 """
@@ -12,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ================= SECURITY =================
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-this')
 
-DEBUG = True  # 🔥 set False in production later
+DEBUG = True   # 🔥 change to False later
 
 ALLOWED_HOSTS = [
     "online-bus-booking-system-backend-2m8m.onrender.com",
@@ -30,25 +29,25 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # third-party
     'rest_framework',
     'corsheaders',
 
-    # local
     'buses',
 ]
 
 
 # ================= MIDDLEWARE =================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # must be first
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
 
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -79,7 +78,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # ================= DATABASE =================
-# 🔥 Using SQLite for Render (simple & works immediately)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -113,7 +111,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# ================= CORS CONFIG =================
+# ================= CORS =================
 CORS_ALLOWED_ORIGINS = [
     "https://online-bus-booking-system-frontend.vercel.app",
     "http://localhost:5173",
@@ -122,11 +120,8 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# (Optional for testing only)
-# CORS_ALLOW_ALL_ORIGINS = True
 
-
-# ================= EMAIL CONFIG =================
+# ================= EMAIL =================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
