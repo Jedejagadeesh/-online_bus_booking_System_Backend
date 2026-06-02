@@ -80,13 +80,27 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # ================= DATABASE =================
-DATABASES = {
+# Local default uses SQLite. Deployment (Railway/MySQL) uses env vars.
+DB_ENGINE = os.getenv("DB_ENGINE", "sqlite")  # set DB_ENGINE=mysql for deployment
+
+if DB_ENGINE == "sqlite":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'defaultdb',
+        'USER': 'avnadmin',
+        'PASSWORD': 'AVNS_l8ayMzC3YxCVMrhY8pA',
+        'HOST': 'mysql-11250e53-jagadeeshjade490-e1f6.h.aivencloud.com',
+        'PORT': '15794',
     }
 }
-
 
 # ================= PASSWORD VALIDATION =================
 AUTH_PASSWORD_VALIDATORS = [
@@ -116,7 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ================= CORS CONFIG =================
 CORS_ALLOWED_ORIGINS = [
     "https://online-bus-booking-system-frontend.vercel.app",
-    "http://localhost:5173",
+    "http://localhost:5175",
     "http://127.0.0.1:5173",
 ]
 

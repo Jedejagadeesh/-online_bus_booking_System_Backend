@@ -30,13 +30,16 @@ create_admin()
 # =========================
 @api_view(['GET'])
 def search_buses(request):
-    source = request.GET.get('from', '').strip()
-    destination = request.GET.get('to', '').strip()
+    source = request.GET.get('from')
+    destination = request.GET.get('to')
 
-    buses = Bus.objects.filter(
-        source__icontains=source,
-        destination__icontains=destination
-    )
+    buses = Bus.objects.all()
+
+    if source:
+        buses = buses.filter(source__icontains=source)
+
+    if destination:
+        buses = buses.filter(destination__icontains=destination)
 
     return Response({
         "routes": BusSerializer(buses, many=True).data
