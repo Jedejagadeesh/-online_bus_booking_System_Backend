@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Bus(models.Model):
     operator = models.CharField(max_length=100)
     bus_number = models.CharField(max_length=20)
@@ -16,15 +17,41 @@ class Bus(models.Model):
 
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
-    bus = models.ForeignKey(Bus, on_delete=models.CASCADE)
-    seats = models.CharField(max_length=50)
+    bus = models.ForeignKey(
+        Bus,
+        on_delete=models.CASCADE
+    )
 
-    journey_date = models.DateField(null=True, blank=True)
-    total_price = models.IntegerField(null=True, blank=True)
+    seats = models.CharField(max_length=100)
 
+    journey_date = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    total_price = models.IntegerField(
+        default=0
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.bus} | {self.seats}"
+
+
+class OTP(models.Model):
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.bus} | Seats: {self.seats}"
+        return self.email
