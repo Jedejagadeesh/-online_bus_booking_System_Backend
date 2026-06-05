@@ -221,23 +221,18 @@ def forgot_password(request):
 
     email = request.data.get("email")
 
-    print("EMAIL RECEIVED:", email)
-
     if not email:
         return Response({"error": "Email required"}, status=400)
 
     email = email.strip().lower()
 
-    # 🔥 IMPORTANT FIX HERE
-    user = User.objects.filter(username=email).first()
-
-    print("USER FOUND:", user)
+    # FIXED
+    user = User.objects.filter(email__iexact=email).first()
 
     if not user:
         return Response({"error": "Email not found"}, status=400)
 
     otp = str(random.randint(100000, 999999))
-
     OTP_STORE[email] = otp
 
     send_mail(
